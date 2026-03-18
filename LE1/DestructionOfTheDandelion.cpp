@@ -30,39 +30,18 @@ int main()
         {
             cout << 0 << "\n";
         }
-        else if (oddFields.size() == 1)
-        {
-            cout << evenNumberSum + oddFields[0] << "\n";
-        }
         else
         {
 
-            sort(oddFields.begin(), oddFields.end(), greater<int>());
+            sort(oddFields.begin(), oddFields.end());
 
-            if (oddFields.size() % 2 == 0)
+            int half = oddFields.size() / 2;
+            for (int n = half; n < oddFields.size(); n++)
             {
-                for (int n = 0; n < (oddFields.size() / 2); n++)
-                {
-                    sumOfDandelions += oddFields[n];
-                }
-                if (evenNumberSum > oddFields[oddFields.size() - 1])
-                {
-                    sumOfDandelions += evenNumberSum;
-                }
-                else
-                {
-                    sumOfDandelions += oddFields[oddFields.size() - 1];
-                }
-            }
-            else
-            {
-                for (int n = 0; n < (ceil(oddFields.size()) / 2); n++)
-                {
-                    sumOfDandelions += oddFields[n];
-                }
-                sumOfDandelions += evenNumberSum;
+                sumOfDandelions += oddFields[n];
             }
 
+            sumOfDandelions += evenNumberSum;
             cout << sumOfDandelions << "\n";
         }
     }
