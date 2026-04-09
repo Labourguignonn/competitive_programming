@@ -1,0 +1,63 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+using ll = long long;
+
+struct Fenwick {
+    int n;
+    vector<ll> bit;
+
+    Fenwick(int n) : n(n), bit(n + 1, 0) {}
+
+    // soma delta na posição i (1-based)
+    void update(int i, ll delta) {
+        for (; i <= n; i += i & -i) {
+            bit[i] += delta;
+        }
+    }
+
+    // soma de 1 até i (1-based)
+    ll query(int i) {
+        ll sum = 0;
+        for (; i > 0; i -= i & -i) {
+            sum += bit[i];
+        }
+        return sum;
+    }
+
+    // opcional: range query [l, r]
+    ll query(int l, int r) {
+        return query(r) - query(l - 1);
+    }
+};
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int N, Q;
+    cin >> N >> Q;
+
+    Fenwick ft(N);
+
+    while (Q--) {
+        char op;
+        cin >> op;
+
+        if (op == '+') {
+            int i;
+            ll delta;
+            cin >> i >> delta;
+
+            ft.update(i + 1, delta); // 0 → 1-based
+
+        } else { // '?'
+            int i;
+            cin >> i;
+
+            cout << ft.query(i) << '\n';
+        }
+    }
+
+    return 0;
+}
