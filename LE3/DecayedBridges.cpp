@@ -2,45 +2,59 @@
 using namespace std;
 
 struct DSU {
-    vector<int> parent;
+    vector<int> parent, sz;
 
     DSU(int n) {
         parent.resize(n);
-        for (int i = 0; i < n; i++)
-            parent[i] = i;
+        sz.resize(n, 1);
+        iota(parent.begin(), parent.end(), 0);
     }
 
     int find(int x) {
-        if (x == parent[x]) return x;
-        return parent[x] = find(parent[x]);
+        if (x != parent[x])
+            parent[x] = find(parent[x]);
+        return parent[x];
     }
 
-    void unite(int a, int b) {
-        a = find(a);
-        b = find(b);
-        if (a != b)
-            parent[b] = a;
+    // Returns the decrease in inconvenience when merging a and b.
+    // If already same component, returns 0.
+    long long unite(int a, int b) {
+        a = find(a); b = find(b);
+        if (a == b) return 0;
+        long long delta = (long long)sz[a] * sz[b];
+        if (sz[a] < sz[b]) swap(a, b);
+        parent[b] = a;
+        sz[a] += sz[b];
+        return delta;
     }
 };
 
 int main(){
-    int n, m, incov = 0;
-    vector<pair<int,int>> b_orders(m);
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n, m;
     cin >> n >> m;
 
-    DSU dsu(n);
+    vector<int> A(m), B(m);
+    for (int i = 0; i < m; i++)
+        cin >> A[i] >> B[i];
 
-    for (int i =0; i< m; i++){
-        int i1, i2;
-        cin >> i1 >> i2;
-        dsu.unite(i1, i2);
+    // Process bridges in reverse: add them one by one
+    // Start state: all bridges collapsed → every island is isolated
+    // Inconvenience = C(n,2) = n*(n-1)/2
+    DSU dsu(n + 1);
+    long long incov = (long long)n * (n - 1) / 2;
 
-        b_orders.push_back(make_pair(i1,i2));
+    vector<long long> ans(m);
+
+    for (int i = m - 1; i >= 0; i--) {
+        ans[i] = incov;
+        incov -= dsu.unite(A[i], B[i]);
     }
 
-    for (int j=0; j < m; j++){
-        
-    }
+    for (int i = 0; i < m; i++)
+        cout << ans[i] << "\n";
 
     return 0;
 }
